@@ -3,10 +3,12 @@ import nodemailer from "nodemailer";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtpi.kinghost.net",
+  port: 465,
+  secure: true, // true para port 465, false para outros
   auth: {
-    user: "marlos@tolky.to",
-    pass: "juluC@14",
+    user: "noreply@algam.com.br",
+    pass: "Site@2024",
   },
 });
 
@@ -19,8 +21,9 @@ export default async function handler(
 
     try {
       await transporter.sendMail({
-        from: email,
+        from: '"Contato" <sugestoes@algam.com.br>', // O email do remetente configurado na KingHost
         to: "marlos@gmail.com",
+        replyTo: email, // Responder para o email fornecido no formulário
         subject: `New Contact Form Submission: ${subject}`,
         text: `
           Name: ${name}
