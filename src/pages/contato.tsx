@@ -135,6 +135,7 @@ const Contact = () => {
             phone,
             subject,
             description,
+            contactType: selectedForm, // Enviando o tipo de contato
           }),
         });
 

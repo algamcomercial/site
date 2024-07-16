@@ -17,20 +17,22 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method === "POST") {
-    const { name, email, phone, subject, description } = req.body;
+    const { name, email, phone, subject, description, contactType } = req.body;
 
     try {
       await transporter.sendMail({
         from: '"Contato" <sugestoes@algam.com.br>', // O email do remetente configurado na KingHost
-        to: "marlos@gmail.com",
+        to: "sugestoes@algam.com.br",
         replyTo: email, // Responder para o email fornecido no formulário
-        subject: `New Contact Form Submission: ${subject}`,
+        subject: `Site Algam: ${subject}`,
         text: `
-          Name: ${name}
+          Contato pelo Site (${contactType})
+          ---
+          Nome: ${name}
           Email: ${email}
-          Phone: ${phone}
-          Subject: ${subject}
-          Description: ${description}
+          Telefone: ${phone}
+          Assunto: ${subject}
+          Descrição: ${description}
         `,
       });
 
