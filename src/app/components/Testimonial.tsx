@@ -1,7 +1,6 @@
 // src/app/components/Testimonial.tsx
 import { useState, useEffect } from "react";
 import { Box, Flex, Text, Container } from "@chakra-ui/react";
-import { motion, AnimatePresence } from "framer-motion";
 
 const testimonials = [
   {
@@ -19,10 +18,22 @@ const testimonials = [
 
 const Testimonial = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [fadeProp, setFadeProp] = useState({
+    fade: "fade-in-up",
+  });
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+      setFadeProp({
+        fade: "fade-out-up",
+      });
+
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
+        setFadeProp({
+          fade: "fade-in-up",
+        });
+      }, 500); // Tempo da animação de saída
     }, 10000); // 10000ms = 10s
 
     return () => clearInterval(interval);
@@ -41,47 +52,39 @@ const Testimonial = () => {
       px="20px"
     >
       <Container maxW="680px" p={4} pt="270px" position="relative">
-        <Flex w="100%" h="300px" alignItems="center" justifyContent="center">
-          <AnimatePresence>
-            {testimonials.map((testimonial, index) =>
-              index === currentIndex ? (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 50 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -50 }}
-                  transition={{ duration: 0.5 }}
-                  style={{ position: "absolute", width: "100%" }}
-                >
-                  <Text
-                    fontSize={{ base: "5vw", md: "25px" }}
-                    textAlign="center"
-                    mb={4}
-                    color="gray.500"
-                    lineHeight="120%"
-                  >
-                    {testimonial.quote}
-                  </Text>
-                  <Flex alignItems="center" justifyContent="center">
-                    <Box
-                      textAlign="center"
-                      color="darkBlue.500"
-                      lineHeight="130%"
-                    >
-                      <Text
-                        fontWeight="bold"
-                        fontSize="20px"
-                        color="darkBlue.500"
-                      >
-                        {testimonial.author}
-                      </Text>
-                      <Text fontSize="20px">{testimonial.position}</Text>
-                    </Box>
-                  </Flex>
-                </motion.div>
-              ) : null
-            )}
-          </AnimatePresence>
+        <Flex
+          w="100%"
+          h="300px"
+          alignItems="center"
+          justifyContent="center"
+          position="relative"
+        >
+          <Box
+            key={currentIndex}
+            className={fadeProp.fade}
+            position="absolute"
+            width="100%"
+          >
+            <Text
+              fontSize={{ base: "5vw", md: "25px" }}
+              textAlign="center"
+              mb={4}
+              color="gray.500"
+              lineHeight="120%"
+            >
+              {testimonials[currentIndex].quote}
+            </Text>
+            <Flex alignItems="center" justifyContent="center">
+              <Box textAlign="center" color="darkBlue.500" lineHeight="130%">
+                <Text fontWeight="bold" fontSize="20px" color="darkBlue.500">
+                  {testimonials[currentIndex].author}
+                </Text>
+                <Text fontSize="20px">
+                  {testimonials[currentIndex].position}
+                </Text>
+              </Box>
+            </Flex>
+          </Box>
         </Flex>
       </Container>
     </Flex>

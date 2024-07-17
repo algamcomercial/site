@@ -48,7 +48,8 @@ const DownloadCatalog = () => {
               order={{ base: "1", md: "2" }}
             />
             <Text
-              fontSize={{ base: "5vw", md: "3.8vw", xl: "45px" }}
+              fontSize={{ base: "5vw", md: "3.8vw", xl: "37px" }}
+              color="darkBlue.500"
               fontWeight="bold"
               fontFamily="Comfortaa"
               lineHeight="100%"

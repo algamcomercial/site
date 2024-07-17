@@ -4,3 +4,33 @@
 body {
   font-family: "Sofia Sans", sans-serif;
 }
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-out-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.fade-in-up {
+  animation: fade-in-up 0.5s forwards;
+}
+
+.fade-out-up {
+  animation: fade-out-up 0.5s forwards;
+}
