@@ -34,3 +34,11 @@ body {
 .fade-out-up {
   animation: fade-out-up 0.5s forwards;
 }
+
+strong {
+  color: var(--chakra-colors-darkBlue-500);
+}
+
+li {
+  margin-bottom: 8px;
+}

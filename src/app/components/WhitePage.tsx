@@ -17,6 +17,7 @@ const WhitePage: React.FC<WhitePageProps> = ({ children, ...props }) => {
         mt="10px"
         color="gray.500"
         lineHeight="130%"
+        {...props}
       >
         {children}
       </Box>

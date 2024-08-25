@@ -9,6 +9,7 @@ import {
   Image,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import DynamicContent from "./DynamicContent";
 
 const ProductsHome = () => {
   const theme = useTheme();
@@ -120,14 +121,7 @@ const ProductsHome = () => {
           color={theme.colors.darkBlue["500"]}
           pb="4px"
         >
-          Produtos{" "}
-          <Text
-            as="span"
-            color={theme.colors.blue["500"]}
-            fontSize={{ base: "36px", md: "56px" }}
-          >
-            Ethicon
-          </Text>
+          <DynamicContent contentKey="home-products-title" />
         </Heading>
         <Text
           fontSize={{ base: "20px", md: "22px" }}
@@ -137,9 +131,7 @@ const ProductsHome = () => {
           mb="30px"
           lineHeight="120%"
         >
-          Oferecemos uma grande variedade de suturas, produtos para hérnia,
-          hemostáticos, colas para uso tópico, dentre outras tecnologias
-          cirúrgicas. Estamos sempre inovando com foco no paciente.
+          <DynamicContent contentKey="home-products-description" />
         </Text>
         <Flex
           wrap="wrap"

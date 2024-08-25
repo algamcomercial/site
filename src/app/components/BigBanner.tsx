@@ -1,5 +1,5 @@
-// src/app/components/BigBanner.tsx
 import { Box, Flex, Text } from "@chakra-ui/react";
+import DynamicContent from "./DynamicContent";
 
 const BigBanner = () => {
   return (
@@ -22,20 +22,16 @@ const BigBanner = () => {
             mb={2}
             lineHeight="90%"
           >
-            Excelência em
-            <br />
-            cada detalhe
+            <DynamicContent contentKey="home-header-title" />
           </Text>
           <Text
             fontFamily="Sofia Sans"
             fontSize={{ base: "16px", md: "24px" }}
             color="white"
             lineHeight="110%"
-            w="100%"
             maxW="600px"
           >
-            Comprometidos com o futuro da saúde, oferecemos tecnologia de ponta
-            e atendimento diferenciado.
+            <DynamicContent contentKey="home-header-subtitle" />
           </Text>
         </Box>
       </Flex>

@@ -64,6 +64,16 @@ const theme = extendTheme({
       baseStyle: {
         fontSize: "20px",
         color: "gray.500",
+        a: {
+          color: "blue.500",
+          textDecoration: "none",
+          borderBottom: "2px solid",
+          borderColor: "darkBlue.500",
+          _hover: {
+            color: "darkBlue.500",
+            textDecoration: "none",
+          },
+        },
       },
     },
   },

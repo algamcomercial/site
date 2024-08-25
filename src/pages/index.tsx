@@ -9,6 +9,7 @@ import DownloadCatalog from "@/app/components/DownloadCatalog";
 import Testimonial from "@/app/components/Testimonial";
 import WhatsAppFooter from "@/app/components/WhatsAppFooter";
 import Footer from "@/app/components/Footer";
+import Blog from "@/app/components/Blog";
 
 const Home = () => {
   return (
@@ -23,6 +24,7 @@ const Home = () => {
         <ProductsHome />
         <DownloadCatalog />
         <Testimonial />
+        <Blog />
         <WhatsAppFooter />
         <Footer />
       </Flex>

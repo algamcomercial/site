@@ -16,6 +16,7 @@ import WhatsAppFooter from "@/app/components/WhatsAppFooter";
 import Footer from "@/app/components/Footer";
 import WhitePage from "@/app/components/WhitePage";
 import Head from "next/head";
+import DynamicContent from "@/app/components/DynamicContent";
 
 type FormType = "Suporte" | "Comercial" | "Financeiro" | "Autodenúncia";
 
@@ -264,14 +265,7 @@ const Contact = () => {
               fontSize={{ base: "9vw", md: "42px", lg: "46px" }}
               lineHeight="100%"
             >
-              Entre em{" "}
-              <Text
-                as="span"
-                color="blue.500"
-                fontSize={{ base: "9vw", md: "42px", lg: "46px" }}
-              >
-                Contato
-              </Text>
+              <DynamicContent contentKey="contact-title" />
             </Heading>
 
             <Text
@@ -279,14 +273,12 @@ const Contact = () => {
               fontSize={{ base: "18px", md: "20px" }}
               fontWeight="bold"
             >
-              Tem alguma dúvida ou precisa de mais informações? <br />
+              <DynamicContent contentKey="contact-subtitle" />
               <br />
             </Text>
 
             <Text mt={2} fontSize={{ base: "18px", md: "20px" }}>
-              Nossa equipe está pronta para ajudar. Preencha o formulário abaixo
-              ou utilize nossos canais de atendimento. Será um prazer falar com
-              você!
+              <DynamicContent contentKey="contact-description" />
             </Text>
           </Flex>
 
@@ -318,14 +310,11 @@ const Contact = () => {
                   color="darkBlue.500"
                   fontSize={{ base: "18px", md: "20px" }}
                 >
-                  Algam Comercial Ltda
+                  <DynamicContent contentKey="contact-company-name" />
                 </Text>
 
                 <Text fontSize={{ base: "18px", md: "20px" }}>
-                  Rua Amparo, 9 - Loja 03, 04 e 05
-                </Text>
-                <Text fontSize={{ base: "18px", md: "20px" }}>
-                  Sala 201 A 204 - Alto Barroca - BH - MG
+                  <DynamicContent contentKey="contact-company-address" />
                 </Text>
               </Flex>
             </Flex>

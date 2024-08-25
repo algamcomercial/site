@@ -1,5 +1,6 @@
 // src/app/components/Ethicon.tsx
 import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import DynamicContent from "./DynamicContent";
 
 const Ethicon = () => {
   return (
@@ -43,42 +44,7 @@ const Ethicon = () => {
           order={{ base: 1, md: 2 }}
           letterSpacing="-2px"
         >
-          25 anos de{" "}
-          <Text
-            as="span"
-            color="blue.500"
-            fontSize={{ base: "6.5vw", md: "34px" }}
-          >
-            excelência
-          </Text>
-          <br />
-          no fornecimento de
-          <br />
-          <Text
-            as="span"
-            color="blue.500"
-            fontSize={{ base: "6.5vw", md: "34px" }}
-          >
-            produtos médicos
-          </Text>{" "}
-          de alta
-          <br />
-          <Text
-            as="span"
-            color="blue.500"
-            fontSize={{ base: "6.5vw", md: "34px" }}
-          >
-            qualidade
-          </Text>{" "}
-          e{" "}
-          <Text
-            as="span"
-            color="blue.500"
-            fontSize={{ base: "6.5vw", md: "34px" }}
-          >
-            confiança
-          </Text>
-          .
+          <DynamicContent contentKey="home-ethicon" />
         </Text>
       </Flex>
     </Box>

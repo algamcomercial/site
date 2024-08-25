@@ -1,19 +1,19 @@
 // src/app/components/Testimonial.tsx
 import { useState, useEffect } from "react";
 import { Box, Flex, Text, Container } from "@chakra-ui/react";
+import DynamicContent from "./DynamicContent";
 
 const testimonials = [
   {
-    quote: `"Quero agradecer a todos que fazem parte da equipe Algam pelo atendimento eficaz e pelos produtos médicos de alta qualidade. Recomendo a Algam sempre para profissionais da área da saúde, em virtude da excelência e competência dessa empresa."`,
-    author: "Dra. Ana Paula P. Barros",
-    position: "Clínica Ana Barros",
+    quoteKey: "testimonial1-quote",
+    authorKey: "testimonial1-author",
+    positionKey: "testimonial1-position",
   },
   {
-    quote: `"Já compro fios na Algam há anos. Sempre foram muito gentis e entregam no prazo combinado. Muito satisfeita com todo o trabalho da equipe."`,
-    author: "Dra. Euzebia Reguete Nunes",
-    position: "Cirurgiã Dentista",
+    quoteKey: "testimonial2-quote",
+    authorKey: "testimonial2-author",
+    positionKey: "testimonial2-position",
   },
-  // Adicione mais depoimentos conforme necessário
 ];
 
 const Testimonial = () => {
@@ -72,15 +72,21 @@ const Testimonial = () => {
               color="gray.500"
               lineHeight="120%"
             >
-              {testimonials[currentIndex].quote}
+              <DynamicContent
+                contentKey={testimonials[currentIndex].quoteKey}
+              />
             </Text>
             <Flex alignItems="center" justifyContent="center">
               <Box textAlign="center" color="darkBlue.500" lineHeight="130%">
                 <Text fontWeight="bold" fontSize="20px" color="darkBlue.500">
-                  {testimonials[currentIndex].author}
+                  <DynamicContent
+                    contentKey={testimonials[currentIndex].authorKey}
+                  />
                 </Text>
                 <Text fontSize="20px">
-                  {testimonials[currentIndex].position}
+                  <DynamicContent
+                    contentKey={testimonials[currentIndex].positionKey}
+                  />
                 </Text>
               </Box>
             </Flex>
