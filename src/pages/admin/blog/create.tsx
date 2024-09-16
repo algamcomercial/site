@@ -22,9 +22,15 @@ import Header from "@/app/components/admin/Header";
 // Remova o import dinâmico se possível
 import dynamic from "next/dynamic"; // Utilize o dynamic import para resolver o problema
 import { useRouter } from "next/router";
+import ReactQuillType, { ReactQuillProps } from "react-quill";
 
 // Importe o ReactQuill dinamicamente, desativando o SSR
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill"), {
+  ssr: false,
+}) as unknown as React.ForwardRefExoticComponent<
+  ReactQuillProps & React.RefAttributes<ReactQuillType>
+>;
+
 import "react-quill/dist/quill.snow.css";
 
 interface Category {
@@ -44,7 +50,7 @@ const CreateArticlePage: React.FC = () => {
   const toast = useToast();
   const router = useRouter();
 
-  const quillRef = useRef<any>(null);
+  const quillRef = useRef<ReactQuillType>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
