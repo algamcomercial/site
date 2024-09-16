@@ -42,3 +42,8 @@ strong {
 li {
   margin-bottom: 8px;
 }
+
+h2 {
+  font-size: 30px;
+  font-weight: 600;
+}
