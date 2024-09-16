@@ -10,6 +10,8 @@ type Article = {
   slug: string;
   category_id: number;
   category_name: string;
+  highlight: boolean;
+  published: boolean;
 };
 
 export default async function handler(
@@ -35,7 +37,9 @@ export default async function handler(
         image,
         slug,
         category_id,
-        categories(name)
+        categories(name),
+        published,
+        highlight
       `
       )
       .eq("slug", slug)
@@ -62,6 +66,8 @@ export default async function handler(
       slug: data.slug,
       category_id: data.category_id,
       category_name: categoryName, // Usando o nome da primeira categoria
+      highlight: data.highlight,
+      published: data.published,
     };
 
     return res.status(200).json(article);

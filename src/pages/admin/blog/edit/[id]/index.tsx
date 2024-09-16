@@ -9,6 +9,7 @@ import {
   Select,
   Image,
   FormLabel,
+  Checkbox,
 } from "@chakra-ui/react";
 import SidebarMenu from "@/app/components/admin/SidebarMenu";
 import Header from "@/app/components/admin/Header";
@@ -30,6 +31,8 @@ const EditArticlePage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [published, setPublished] = useState(false);
+  const [highlight, setHighlight] = useState(false);
   const toast = useToast();
   const router = useRouter();
   const { id } = router.query;
@@ -51,6 +54,8 @@ const EditArticlePage: React.FC = () => {
         setTitle(articleData.title);
         setContent(articleData.description); // Substituindo descrição por conteúdo
         setCategory(articleData.category_id);
+        setPublished(articleData.published);
+        setHighlight(articleData.highlight);
         if (articleData.image) {
           setImagePreview(articleData.image);
         }
@@ -98,6 +103,8 @@ const EditArticlePage: React.FC = () => {
           description: content, // Substituindo descrição por conteúdo
           category,
           image: base64Image,
+          published,
+          highlight,
         }),
       });
 
@@ -200,6 +207,21 @@ const EditArticlePage: React.FC = () => {
                   />
                 </Box>
               )}
+              <Flex mb={4} gap={3}>
+                <Checkbox
+                  isChecked={published}
+                  onChange={(e) => setPublished(e.target.checked)}
+                >
+                  Publicado
+                </Checkbox>
+
+                <Checkbox
+                  isChecked={highlight}
+                  onChange={(e) => setHighlight(e.target.checked)}
+                >
+                  Destacado
+                </Checkbox>
+              </Flex>
               <Button colorScheme="blue" onClick={handleUpdate}>
                 Atualizar Artigo
               </Button>

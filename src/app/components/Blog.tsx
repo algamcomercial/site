@@ -50,89 +50,106 @@ const Blog = () => {
 
   return (
     <Container maxW="980px" w="100%" justifyContent="space-between">
-      {articles.map((article) => (
-        <Flex
-          key={article.id}
-          direction="column"
-          alignItems="center"
-          my="100px"
-          px="20px"
-        >
-          <Heading
-            as="h2"
-            fontSize={{ base: "36px", md: "56px" }}
-            color={theme.colors.darkBlue["500"]}
-            pb="4px"
-            mb="40px"
+      {articles.length &&
+        articles.map((article) => (
+          <Flex
+            key={article.id}
+            direction="column"
+            alignItems="center"
+            my="100px"
+            mb={{ base: 0, md: "100px" }}
+            px={{ base: 0, md: "20px" }}
           >
-            <DynamicContent contentKey="home-blog-title" />
-          </Heading>
+            <Heading
+              as="h2"
+              fontSize={{ base: "36px", md: "56px" }}
+              color={theme.colors.darkBlue["500"]}
+              pb="4px"
+              mb="40px"
+            >
+              <DynamicContent contentKey="home-blog-title" />
+            </Heading>
 
-          <Flex gap="40px" alignItems="center">
             <Flex
-              w="408px"
-              h="282px"
-              bgImage={`url(${article.image})`}
-              bgSize="cover"
-              borderRadius="200px"
-              position="relative"
+              gap={{ base: "20px", md: "40px" }}
+              alignItems="center"
+              flexDir={{ base: "column", md: "row" }}
             >
               <Flex
-                w="100%"
-                h="100%"
-                bgColor="darkBlue.500"
-                opacity=".4"
+                w={{ base: "100%", md: "408px" }}
+                h="282px"
+                bgImage={`url(${article.image})`}
+                bgSize="cover"
+                bgPosition="center"
                 borderRadius="200px"
-                position="absolute"
-              ></Flex>
+                position="relative"
+              >
+                <Flex
+                  w="100%"
+                  h="100%"
+                  bgColor="darkBlue.500"
+                  opacity=".4"
+                  borderRadius="200px"
+                  position="absolute"
+                ></Flex>
+
+                <Flex
+                  w="112px"
+                  h="112px"
+                  bg="white"
+                  borderRadius="50%"
+                  zIndex="1"
+                  align="center"
+                  justify="center"
+                  position="absolute"
+                  right="0"
+                  bottom="0"
+                >
+                  <Image
+                    h="65px"
+                    src={`/images/${getCategoryIcon(article.category_id)}`}
+                    alt={`Icone da categoria`}
+                  />
+                </Flex>
+              </Flex>
 
               <Flex
-                w="112px"
-                h="112px"
-                bg="white"
-                borderRadius="50%"
-                zIndex="1"
-                align="center"
-                justify="center"
-                position="absolute"
-                right="0"
-                bottom="0"
+                w={{ base: "100%", md: "50%" }}
+                flexDir="column"
+                textAlign={{ base: "center", md: "left" }}
+                alignItems={{ base: "center", md: "start" }}
               >
-                <Image
-                  h="65px"
-                  src={`/images/${getCategoryIcon(article.category_id)}`}
-                  alt={`Icone da categoria`}
-                />
+                <Text
+                  w="100%"
+                  fontSize="32px"
+                  lineHeight="110%"
+                  textAlign={{ base: "center", md: "left" }}
+                >
+                  {article.title}
+                </Text>
+
+                <Text color="darkBlue.500" fontSize="18px" mt="10px" w="100%">
+                  {new Date(article.created_at).toLocaleDateString("pt-BR", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </Text>
+
+                <Link href={`/blog/${article.slug}`} passHref>
+                  <Button
+                    colorScheme="blue"
+                    borderRadius="40px"
+                    mt="20px"
+                    px="30px"
+                  >
+                    Ler artigo
+                  </Button>
+                </Link>
               </Flex>
             </Flex>
-
-            <Flex w="50%" flexDir="column" alignItems="start">
-              <Text fontSize="32px" lineHeight="110%">
-                {article.title}
-              </Text>
-
-              <Text color="darkBlue.500" fontSize="18px" mt="10px">
-                {new Date(article.created_at).toLocaleDateString("pt-BR", {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                })}
-              </Text>
-
-              <Link href={`/blog/${article.slug}`} passHref>
-                <Button
-                  colorScheme="blue"
-                  borderRadius="40px"
-                  mt="20px"
-                  px="30px"
-                >
-                  Ler artigo
-                </Button>
-              </Link>
-            </Flex>
           </Flex>
-        </Flex>
-      ))}
+        ))}
     </Container>
   );
 };

@@ -72,7 +72,7 @@ const BlogPost: React.FC = () => {
 
       <WhitePage borderBottomRadius="0" p="0px !important">
         <Flex flexDir="column" alignItems="center">
-          <Flex w="100%" h="465px">
+          <Flex w="100%" h={{ base: "300px", md: "465px" }}>
             <Flex
               bgImage={`url(${article.image})`}
               w="100%"
@@ -134,11 +134,16 @@ const BlogPost: React.FC = () => {
 
                 <Flex
                   flexDir="column"
-                  gap="16px"
+                  gap={{ base: "6px", md: "16px" }}
                   bottom="25px"
                   position="absolute"
+                  px={{ base: "20px", md: 0 }}
                 >
-                  <Text fontWeight={900} color="white">
+                  <Text
+                    fontWeight={900}
+                    color="white"
+                    fontSize={{ base: "14px", md: "20px" }}
+                  >
                     Blog Algam
                   </Text>
 
@@ -146,7 +151,7 @@ const BlogPost: React.FC = () => {
                     as="h1"
                     color="white"
                     lineHeight="100%"
-                    fontSize="40px"
+                    fontSize={{ base: "30px", md: "40px" }}
                     fontWeight="500"
                   >
                     {article.title}
@@ -163,8 +168,9 @@ const BlogPost: React.FC = () => {
             pb="40px"
             flexDir="column"
             gap="30px"
+            px={{ base: "20px", md: "0" }}
           >
-            <Text color="darkBlue.500" fontSize="14px">
+            <Text color="darkBlue.500" fontSize="16px">
               Publicado em{" "}
               {new Date(article.created_at).toLocaleDateString("pt-BR", {
                 day: "numeric",
@@ -176,7 +182,7 @@ const BlogPost: React.FC = () => {
             <Box
               dangerouslySetInnerHTML={{ __html: article.description }}
               color="darkBlue.500"
-              fontSize="16px"
+              fontSize="20px"
               lineHeight="1.7"
             />
           </Flex>

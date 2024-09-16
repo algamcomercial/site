@@ -16,7 +16,8 @@ export default async function handler(
   if (req.method === "PUT") {
     try {
       const { id } = req.query;
-      const { title, description, category, image } = req.body;
+      const { title, description, category, image, published, highlight } =
+        req.body;
 
       // Certifique-se de que `category` é um número
       const categoryId = parseInt(category, 10);
@@ -54,14 +55,14 @@ export default async function handler(
         description,
         category_id: categoryId, // Certifique-se de passar um número
         slug,
+        published,
+        highlight,
       };
 
       // Somente adicionar a imagem se não for undefined
       if (imageUrl) {
         updateData.image = imageUrl;
       }
-
-      console.log(id);
 
       const { data: updatedArticle, error: updateError } = await supabase
         .from("articles")

@@ -4,6 +4,7 @@ import Header from "@/app/components/Header";
 import Footer from "@/app/components/Footer";
 import WhitePage from "@/app/components/WhitePage";
 import Head from "next/head";
+import Link from "next/link";
 
 interface Article {
   id: number;
@@ -63,7 +64,10 @@ const Blog: React.FC = () => {
         <title>Blog - Algam</title>
       </Head>
       <Header />
-      <WhitePage borderBottomRadius="0" px="80px">
+      <WhitePage
+        borderBottomRadius="0"
+        px={{ base: "20px", md: "40px", lg: "80px" }}
+      >
         <Flex w="100%" align="center" justify="center" flexDir="column">
           <Flex
             w="100%"
@@ -72,7 +76,7 @@ const Blog: React.FC = () => {
             justify="center"
             flexDir="column"
           >
-            <Heading as="h1">
+            <Heading as="h1" fontSize={{ base: "40px", md: "46px" }}>
               Blog{" "}
               <Box as="span" color="lightBlue.500">
                 Algam
@@ -80,114 +84,138 @@ const Blog: React.FC = () => {
             </Heading>
 
             <Text textAlign="center" mt="8px">
-              Nossa equipe está pronta para ajudar. Preencha o formulário abaixo
-              ou utilize nossos canais de atendimento. Será um prazer falar com
-              você!
+              Fique por dentro sobre as novidades e os produtos da Algam.
             </Text>
           </Flex>
 
           {latestArticle && (
-            <Flex w="100%" borderRadius="20px" overflow="hidden" mt="40px">
-              <Flex w="39%" bg="blue.500" flexDir="column" p="46px" gap="20px">
-                <Text color="whiteAlpha.600">
-                  {latestArticle.category_name}
-                </Text>
-
-                <Heading
-                  as="h2"
-                  color="white"
-                  fontSize="30px"
-                  fontWeight="500"
-                  lineHeight="100%"
-                  letterSpacing="-0.5px"
-                  pb="0"
-                >
-                  {latestArticle.title}
-                </Heading>
-
-                <Text color="whiteAlpha.600">
-                  {new Date(latestArticle.created_at).toLocaleDateString(
-                    "pt-BR",
-                    {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    }
-                  )}
-                </Text>
-              </Flex>
+            <Box as={Link} href={`/blog/${latestArticle.slug}`} w="100%">
               <Flex
-                maxW="61%"
                 w="100%"
-                bgImage={`url(${latestArticle.image})`}
-                bgSize="cover"
-                bgPosition="center"
-                position="relative"
+                borderRadius="20px"
+                overflow="hidden"
+                mt="40px"
+                flexDir={{ base: "column-reverse", md: "row" }}
               >
                 <Flex
-                  w="100%"
-                  h="100%"
-                  bgColor="darkBlue.500"
-                  opacity={0.4}
-                  position="absolute"
-                ></Flex>
+                  w={{ base: "100%", md: "39%" }}
+                  bg="blue.500"
+                  flexDir="column"
+                  p={{ base: "30px", lg: "46px" }}
+                  gap="20px"
+                  minH={{ base: "180px", md: "320px" }}
+                  justifyContent="space-between"
+                >
+                  <Text
+                    color="whiteAlpha.600"
+                    fontSize={{ base: "16px", md: "16px", lg: "20px" }}
+                  >
+                    {latestArticle.category_name}
+                  </Text>
+
+                  <Heading
+                    as="h2"
+                    color="white"
+                    fontSize={{ base: "24px", md: "24px", lg: "32px" }}
+                    fontWeight="500"
+                    lineHeight="100%"
+                    letterSpacing="-0.5px"
+                    pb="0"
+                  >
+                    {latestArticle.title}
+                  </Heading>
+
+                  <Text
+                    color="whiteAlpha.600"
+                    fontSize={{ base: "16px", md: "16px", lg: "20px" }}
+                  >
+                    {new Date(latestArticle.created_at).toLocaleDateString(
+                      "pt-BR",
+                      {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                  </Text>
+                </Flex>
 
                 <Flex
-                  w="112px"
-                  h="112px"
-                  bg="white"
-                  borderRadius="50%"
-                  zIndex="1"
-                  position="absolute"
-                  bottom="20px"
-                  right="20px"
-                  align="center"
-                  justify="center"
+                  maxW={{ base: "100%", md: "61%" }}
+                  minH="200px"
+                  w="100%"
+                  bgImage={`url(${latestArticle.image})`}
+                  bgSize="cover"
+                  bgPosition="center"
+                  position="relative"
                 >
-                  <Image
-                    h="65px"
-                    src={`/images/${getCategoryIcon(
-                      latestArticle.category_id
-                    )}`}
-                    alt={latestArticle.category_name}
-                  />
+                  <Flex
+                    w="100%"
+                    h="100%"
+                    bgColor="darkBlue.500"
+                    opacity={0.4}
+                    position="absolute"
+                  ></Flex>
+
+                  <Flex
+                    w="112px"
+                    h="112px"
+                    bg="white"
+                    borderRadius="50%"
+                    zIndex="1"
+                    position="absolute"
+                    bottom="20px"
+                    right="20px"
+                    align="center"
+                    justify="center"
+                  >
+                    <Image
+                      h="65px"
+                      src={`/images/${getCategoryIcon(
+                        latestArticle.category_id
+                      )}`}
+                      alt={latestArticle.category_name}
+                    />
+                  </Flex>
                 </Flex>
+              </Flex>
+            </Box>
+          )}
+
+          {articles.length > 0 && (
+            <Flex mt="80px" flexDir="column" align="center">
+              <Heading
+                as="h2"
+                fontSize="28px"
+                color="darkBlue.500"
+                letterSpacing="-1px"
+                mb="30px"
+              >
+                Últimos Artigos
+              </Heading>
+
+              <Flex flexDir="column" gap="70px">
+                {articles.map((article, index) => (
+                  <ArticleCard
+                    key={index}
+                    title={article.title}
+                    date={new Date(article.created_at).toLocaleDateString(
+                      "pt-BR",
+                      {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
+                    imageSrc={article.image}
+                    altText={article.title}
+                    categoryName={article.category_name}
+                    link={`/blog/${article.slug}`}
+                  />
+                ))}
               </Flex>
             </Flex>
           )}
-
-          <Flex mt="80px" flexDir="column" align="center">
-            <Heading
-              as="h2"
-              fontSize="28px"
-              color="darkBlue.500"
-              letterSpacing="-1px"
-              mb="30px"
-            >
-              Últimos Artigos
-            </Heading>
-
-            <Flex flexDir="column" gap="70px">
-              {articles.map((article, index) => (
-                <ArticleCard
-                  key={index}
-                  title={article.title}
-                  date={new Date(article.created_at).toLocaleDateString(
-                    "pt-BR",
-                    {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    }
-                  )}
-                  imageSrc={article.image}
-                  altText={article.title}
-                  categoryName={article.category_name}
-                  link={`/articles/${article.slug}`}
-                />
-              ))}
-            </Flex>
-          </Flex>
         </Flex>
       </WhitePage>
       <Footer />
@@ -213,11 +241,15 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
   link,
 }) => {
   return (
-    <Flex gap="30px" alignItems="center">
+    <Flex
+      gap="30px"
+      alignItems="center"
+      flexDir={{ base: "column", md: "row" }}
+    >
       <Flex
-        minW="400px"
-        w="400px"
-        h="280px"
+        minW={{ base: "300px", md: "300px", lg: "400px" }}
+        w={{ base: "100%", md: "300px", lg: "400px" }}
+        h={{ base: "200px", md: "230px", lg: "280px" }}
         borderRadius="400px"
         bgImage={`url(${imageSrc})`}
         bgRepeat="no-repeat"
@@ -250,16 +282,21 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         </Flex>
       </Flex>
 
-      <Flex w="430px" flexDir="column" gap="14px" align="start">
+      <Flex
+        w="auto"
+        flexDir="column"
+        gap={{ base: "4px", md: "14px" }}
+        align="start"
+      >
         <Text fontSize="14px" color="darkBlue.500">
           {categoryName}
         </Text>
 
-        <Text fontSize="32px" lineHeight="110%">
+        <Text fontSize={{ base: "24px", lg: "32px" }} lineHeight="110%">
           {title}
         </Text>
 
-        <Text fontSize="18px" color="darkBlue.500">
+        <Text fontSize="14px" color="darkBlue.500">
           {date}
         </Text>
 
@@ -269,6 +306,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
           colorScheme="blue"
           borderRadius="40px"
           px="25px"
+          mt={{ base: "16px", md: 0 }}
         >
           Ler artigo
         </Button>

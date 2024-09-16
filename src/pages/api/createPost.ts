@@ -16,7 +16,8 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       // Parse the incoming request body
-      const { title, description, category, image } = req.body;
+      const { title, description, category, image, published, highlight } =
+        req.body;
 
       let imageUrl = "";
 
@@ -62,6 +63,8 @@ export default async function handler(
             category_id: category,
             image: imageUrl,
             slug,
+            published,
+            highlight,
           },
         ]);
 

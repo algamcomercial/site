@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Box,
   Button,
@@ -9,19 +15,22 @@ import {
   Select,
   Image,
   FormLabel,
+  Checkbox,
 } from "@chakra-ui/react";
 import SidebarMenu from "@/app/components/admin/SidebarMenu";
 import Header from "@/app/components/admin/Header";
-import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
+// Remova o import dinâmico se possível
+import dynamic from "next/dynamic"; // Utilize o dynamic import para resolver o problema
 import { useRouter } from "next/router";
+
+// Importe o ReactQuill dinamicamente, desativando o SSR
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.snow.css";
 
 interface Category {
   id: string;
   name: string;
 }
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const CreateArticlePage: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -30,8 +39,12 @@ const CreateArticlePage: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [published, setPublished] = useState(false);
+  const [highlight, setHighlight] = useState(false);
   const toast = useToast();
   const router = useRouter();
+
+  const quillRef = useRef<any>(null);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -80,6 +93,8 @@ const CreateArticlePage: React.FC = () => {
         description: content,
         category,
         image: base64Image,
+        published,
+        highlight,
       };
 
       const response = await fetch("/api/createPost", {
@@ -118,6 +133,86 @@ const CreateArticlePage: React.FC = () => {
     setContent(value);
   }, []);
 
+  const handleImageUpload = useCallback(() => {
+    console.log(typeof window);
+    if (typeof window !== "undefined") {
+      const input = document.createElement("input");
+      input.setAttribute("type", "file");
+      input.setAttribute("accept", "image/*");
+      input.click();
+
+      input.onchange = async () => {
+        const file = input.files?.[0];
+        if (file) {
+          const base64Image = await toBase64(file);
+
+          try {
+            const response = await fetch("/api/uploadImage", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ image: base64Image }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+              const quill = quillRef.current;
+              if (quill && quill.getEditor) {
+                const editor = quill.getEditor();
+                const range = editor.getSelection(true);
+                editor.insertEmbed(range.index, "image", data.url);
+              } else {
+                console.error(
+                  "Editor instance is not available or getEditor is not a function"
+                );
+              }
+            } else {
+              throw new Error(data.error || "Erro ao fazer upload da imagem.");
+            }
+          } catch (error) {
+            console.error("Erro ao fazer upload da imagem:", error);
+            toast({
+              title: "Erro ao fazer upload da imagem",
+              description: "Ocorreu um erro ao fazer o upload da imagem.",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        }
+      };
+    }
+  }, [toast]);
+
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: "1" }, { header: "2" }, { font: [] }],
+          [{ size: [] }],
+          ["bold", "italic", "underline", "strike", "blockquote"],
+          [
+            { list: "ordered" },
+            { list: "bullet" },
+            { indent: "-1" },
+            { indent: "+1" },
+          ],
+          ["link", "image", "video"],
+          ["clean"],
+          [{ align: [] }],
+        ],
+        handlers: {
+          image: handleImageUpload,
+        },
+      },
+      clipboard: {
+        matchVisual: false,
+      },
+    }),
+    [handleImageUpload]
+  );
+
   return (
     <Flex minH="100vh" bg="gray.100">
       <Box
@@ -151,7 +246,12 @@ const CreateArticlePage: React.FC = () => {
               </Box>
               <Box mb={4}>
                 <FormLabel htmlFor="content">Conteúdo</FormLabel>
-                <ReactQuill value={content} onChange={handleContentChange} />
+                <ReactQuill
+                  ref={quillRef}
+                  value={content}
+                  onChange={handleContentChange}
+                  modules={modules}
+                />
               </Box>
               <Box mb={4}>
                 <FormLabel htmlFor="category">Categoria</FormLabel>
@@ -189,6 +289,21 @@ const CreateArticlePage: React.FC = () => {
                   />
                 </Box>
               )}
+              <Flex mb={4} gap={3}>
+                <Checkbox
+                  isChecked={published}
+                  onChange={(e) => setPublished(e.target.checked)}
+                >
+                  Publicado
+                </Checkbox>
+
+                <Checkbox
+                  isChecked={highlight}
+                  onChange={(e) => setHighlight(e.target.checked)}
+                >
+                  Destacado
+                </Checkbox>
+              </Flex>
               <Button colorScheme="blue" onClick={handleCreate}>
                 Criar Artigo
               </Button>
