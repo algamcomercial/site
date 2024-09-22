@@ -27,7 +27,9 @@ const Blog = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await fetch("/api/getPosts?limit=1");
+      const res = await fetch(
+        "/api/getPosts?limit=1&pusblished=true&highlight=true"
+      );
       const data = await res.json();
       setArticles(data);
     };
@@ -84,15 +86,6 @@ const Blog = () => {
                 borderRadius="200px"
                 position="relative"
               >
-                <Flex
-                  w="100%"
-                  h="100%"
-                  bgColor="darkBlue.500"
-                  opacity=".4"
-                  borderRadius="200px"
-                  position="absolute"
-                ></Flex>
-
                 <Flex
                   w="112px"
                   h="112px"

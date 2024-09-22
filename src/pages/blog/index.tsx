@@ -24,7 +24,7 @@ const Blog: React.FC = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch("/api/getPosts?limit=11");
+        const response = await fetch("/api/getPosts?limit=11&published=true");
         const data: Article[] = await response.json();
 
         if (data.length > 0) {
@@ -150,14 +150,6 @@ const Blog: React.FC = () => {
                   position="relative"
                 >
                   <Flex
-                    w="100%"
-                    h="100%"
-                    bgColor="darkBlue.500"
-                    opacity={0.4}
-                    position="absolute"
-                  ></Flex>
-
-                  <Flex
                     w="112px"
                     h="112px"
                     bg="white"
@@ -257,15 +249,6 @@ const ArticleCard: React.FC<ArticleCardProps> = ({
         bgPosition="center"
         position="relative"
       >
-        <Flex
-          w="100%"
-          h="100%"
-          bgColor="darkBlue.500"
-          borderRadius="400px"
-          opacity={0.4}
-          position="absolute"
-        ></Flex>
-
         <Flex
           w="112px"
           h="112px"

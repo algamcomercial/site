@@ -1,3 +1,4 @@
+// pages/admin/CreateArticlePage.tsx
 import React, {
   useEffect,
   useState,
@@ -19,19 +20,56 @@ import {
 } from "@chakra-ui/react";
 import SidebarMenu from "@/app/components/admin/SidebarMenu";
 import Header from "@/app/components/admin/Header";
-// Remova o import dinâmico se possível
-import dynamic from "next/dynamic"; // Utilize o dynamic import para resolver o problema
 import { useRouter } from "next/router";
-import ReactQuillType, { ReactQuillProps } from "react-quill";
+import styled from "@emotion/styled";
+import "quill/dist/quill.snow.css";
+import Quill from "quill";
+import { useQuill } from "react-quilljs";
 
-// Importe o ReactQuill dinamicamente, desativando o SSR
-const ReactQuill = dynamic(() => import("react-quill"), {
-  ssr: false,
-}) as unknown as React.ForwardRefExoticComponent<
-  ReactQuillProps & React.RefAttributes<ReactQuillType>
->;
+const saveToServer = async (file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
 
-import "react-quill/dist/quill.snow.css";
+  try {
+    const response = await fetch("/api/uploadImage", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao fazer upload da imagem");
+    }
+
+    const data = await response.json();
+    return data.url; // Supondo que o endpoint retorna a URL da imagem
+  } catch (error) {
+    console.error("Erro ao salvar a imagem:", error);
+    return null;
+  }
+};
+
+// Função para manipular a imagem no editor
+const selectLocalImage = (quill: Quill) => {
+  const input = document.createElement("input");
+  input.setAttribute("type", "file");
+  input.setAttribute("accept", "image/*");
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files ? input.files[0] : null;
+    if (file) {
+      const url = await saveToServer(file);
+      if (url) {
+        const range = quill.getSelection();
+        quill.insertEmbed(range?.index || 0, "image", url);
+      } else {
+        alert("Erro ao fazer upload da imagem");
+      }
+    }
+  };
+};
+
+const EditorContainer = styled.div``;
 
 interface Category {
   id: string;
@@ -50,7 +88,18 @@ const CreateArticlePage: React.FC = () => {
   const toast = useToast();
   const router = useRouter();
 
-  const quillRef = useRef<ReactQuillType>(null);
+  const { quill, quillRef } = useQuill({
+    theme: "snow",
+    modules: {
+      toolbar: {
+        container: [
+          ["bold", "italic", "underline"],
+          ["image"],
+          [{ size: ["small", false, "large"] }],
+        ],
+      },
+    },
+  });
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -69,14 +118,6 @@ const CreateArticlePage: React.FC = () => {
 
     fetchCategories();
   }, []);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   const toBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -135,89 +176,29 @@ const CreateArticlePage: React.FC = () => {
     }
   };
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleContentChange = useCallback((value: string) => {
     setContent(value);
   }, []);
 
-  const handleImageUpload = useCallback(() => {
-    console.log(typeof window);
-    if (typeof window !== "undefined") {
-      const input = document.createElement("input");
-      input.setAttribute("type", "file");
-      input.setAttribute("accept", "image/*");
-      input.click();
+  React.useEffect(() => {
+    if (quill) {
+      quill.on("text-change", () => {
+        setContent(quill.root.innerHTML);
+      });
 
-      input.onchange = async () => {
-        const file = input.files?.[0];
-        if (file) {
-          const base64Image = await toBase64(file);
-
-          try {
-            const response = await fetch("/api/uploadImage", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ image: base64Image }),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-              const quill = quillRef.current;
-              if (quill && quill.getEditor) {
-                const editor = quill.getEditor();
-                const range = editor.getSelection(true);
-                editor.insertEmbed(range.index, "image", data.url);
-              } else {
-                console.error(
-                  "Editor instance is not available or getEditor is not a function"
-                );
-              }
-            } else {
-              throw new Error(data.error || "Erro ao fazer upload da imagem.");
-            }
-          } catch (error) {
-            console.error("Erro ao fazer upload da imagem:", error);
-            toast({
-              title: "Erro ao fazer upload da imagem",
-              description: "Ocorreu um erro ao fazer o upload da imagem.",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-            });
-          }
-        }
-      };
+      // Adiciona o handler customizado para upload de imagem
+      const toolbar: any = quill.getModule("toolbar");
+      toolbar.addHandler("image", () => selectLocalImage(quill));
     }
-  }, [toast]);
-
-  const modules = useMemo(
-    () => ({
-      toolbar: {
-        container: [
-          [{ header: "1" }, { header: "2" }, { font: [] }],
-          [{ size: [] }],
-          ["bold", "italic", "underline", "strike", "blockquote"],
-          [
-            { list: "ordered" },
-            { list: "bullet" },
-            { indent: "-1" },
-            { indent: "+1" },
-          ],
-          ["link", "image", "video"],
-          ["clean"],
-          [{ align: [] }],
-        ],
-        handlers: {
-          image: handleImageUpload,
-        },
-      },
-      clipboard: {
-        matchVisual: false,
-      },
-    }),
-    [handleImageUpload]
-  );
+  }, [quill]);
 
   return (
     <Flex minH="100vh" bg="gray.100">
@@ -252,12 +233,12 @@ const CreateArticlePage: React.FC = () => {
               </Box>
               <Box mb={4}>
                 <FormLabel htmlFor="content">Conteúdo</FormLabel>
-                <ReactQuill
-                  ref={quillRef}
-                  value={content}
-                  onChange={handleContentChange}
-                  modules={modules}
-                />
+                <EditorContainer style={{ width: "100%" }}>
+                  <div
+                    ref={quillRef}
+                    style={{ minHeight: "100px", height: "auto" }}
+                  />
+                </EditorContainer>
               </Box>
               <Box mb={4}>
                 <FormLabel htmlFor="category">Categoria</FormLabel>

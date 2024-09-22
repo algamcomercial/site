@@ -85,14 +85,6 @@ const BlogPost: React.FC = () => {
               justify="center"
             >
               <Flex
-                w="100%"
-                h="100%"
-                bgColor="darkBlue.500"
-                opacity=".4"
-                position="absolute"
-              ></Flex>
-
-              <Flex
                 bgGradient="linear(to-b, transparent 60%, lightBlue.500)"
                 w="100%"
                 h="100%"
@@ -129,7 +121,7 @@ const BlogPost: React.FC = () => {
                       alt="Categoria"
                     />
                   </Flex>
-                  <Text color="whiteAlpha.700">{article.category_name}</Text>
+                  <Text color="darkBlue.500">{article.category_name}</Text>
                 </Flex>
 
                 <Flex
@@ -141,7 +133,7 @@ const BlogPost: React.FC = () => {
                 >
                   <Text
                     fontWeight={900}
-                    color="white"
+                    color="darkBlue.500"
                     fontSize={{ base: "14px", md: "20px" }}
                   >
                     Blog Algam

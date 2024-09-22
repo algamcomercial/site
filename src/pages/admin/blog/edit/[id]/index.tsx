@@ -13,16 +13,60 @@ import {
 } from "@chakra-ui/react";
 import SidebarMenu from "@/app/components/admin/SidebarMenu";
 import Header from "@/app/components/admin/Header";
-import dynamic from "next/dynamic";
-import "react-quill/dist/quill.snow.css";
 import { useRouter } from "next/router";
+import styled from "@emotion/styled";
+import "quill/dist/quill.snow.css";
+import Quill from "quill";
+import { useQuill } from "react-quilljs";
+
+const saveToServer = async (file: File) => {
+  const formData = new FormData();
+  formData.append("image", file);
+
+  try {
+    const response = await fetch("/api/uploadImage", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Erro ao fazer upload da imagem");
+    }
+
+    const data = await response.json();
+    return data.url;
+  } catch (error) {
+    console.error("Erro ao salvar a imagem:", error);
+    return null;
+  }
+};
+
+const selectLocalImage = (quill: Quill) => {
+  const input = document.createElement("input");
+  input.setAttribute("type", "file");
+  input.setAttribute("accept", "image/*");
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files ? input.files[0] : null;
+    if (file) {
+      const url = await saveToServer(file);
+      if (url) {
+        const range = quill.getSelection();
+        quill.insertEmbed(range?.index || 0, "image", url);
+      } else {
+        alert("Erro ao fazer upload da imagem");
+      }
+    }
+  };
+};
+
+const EditorContainer = styled.div``;
 
 interface Category {
   id: string;
   name: string;
 }
-
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const EditArticlePage: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -37,6 +81,19 @@ const EditArticlePage: React.FC = () => {
   const router = useRouter();
   const { id } = router.query;
 
+  const { quill, quillRef } = useQuill({
+    theme: "snow",
+    modules: {
+      toolbar: {
+        container: [
+          ["bold", "italic", "underline"],
+          ["image"],
+          [{ size: ["small", false, "large"] }],
+        ],
+      },
+    },
+  });
+
   useEffect(() => {
     const fetchCategoriesAndArticle = async () => {
       try {
@@ -48,8 +105,6 @@ const EditArticlePage: React.FC = () => {
         const categoriesData = await categoriesResponse.json();
         const articleData = await articleResponse.json();
 
-        console.log(articleData);
-
         setCategories(categoriesData);
         setTitle(articleData.title);
         setContent(articleData.description); // Substituindo descrição por conteúdo
@@ -59,15 +114,20 @@ const EditArticlePage: React.FC = () => {
         if (articleData.image) {
           setImagePreview(articleData.image);
         }
+
+        // Adiciona o conteúdo ao Quill quando ele estiver pronto
+        if (quill) {
+          quill.clipboard.dangerouslyPasteHTML(articleData.description);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (id) {
+    if (id && quill) {
       fetchCategoriesAndArticle();
     }
-  }, [id]);
+  }, [id, quill]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -100,7 +160,7 @@ const EditArticlePage: React.FC = () => {
         },
         body: JSON.stringify({
           title,
-          description: content, // Substituindo descrição por conteúdo
+          description: quill?.root.innerHTML, // Pega o conteúdo diretamente do Quill
           category,
           image: base64Image,
           published,
@@ -132,9 +192,16 @@ const EditArticlePage: React.FC = () => {
     }
   };
 
-  const handleContentChange = useCallback((value: string) => {
-    setContent(value);
-  }, []);
+  React.useEffect(() => {
+    if (quill) {
+      const toolbar: any = quill.getModule("toolbar");
+      toolbar.addHandler("image", () => selectLocalImage(quill));
+
+      console.log(content);
+
+      quill.clipboard.dangerouslyPasteHTML(content);
+    }
+  }, [quill]);
 
   return (
     <Flex minH="100vh" bg="gray.100">
@@ -169,7 +236,12 @@ const EditArticlePage: React.FC = () => {
               </Box>
               <Box mb={4}>
                 <FormLabel htmlFor="content">Conteúdo</FormLabel>
-                <ReactQuill value={content} onChange={handleContentChange} />
+                <EditorContainer style={{ width: "100%" }}>
+                  <div
+                    ref={quillRef}
+                    style={{ minHeight: "100px", height: "auto" }}
+                  />
+                </EditorContainer>
               </Box>
               <Box mb={4}>
                 <FormLabel htmlFor="category">Categoria</FormLabel>

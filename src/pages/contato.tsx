@@ -18,7 +18,11 @@ import WhitePage from "@/app/components/WhitePage";
 import Head from "next/head";
 import DynamicContent from "@/app/components/DynamicContent";
 
-type FormType = "Suporte" | "Comercial" | "Financeiro" | "Autodenúncia";
+type FormType =
+  | "Suporte"
+  | "Comercial"
+  | "Financeiro"
+  | "Canal de Ética e Integridade";
 
 const isValidEmail = (email: string) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -99,7 +103,7 @@ const Contact = () => {
       description: "",
     };
 
-    if (selectedForm !== "Autodenúncia") {
+    if (selectedForm !== "Canal de Ética e Integridade") {
       if (!isValidEmail(email)) {
         newErrors.email = "Por favor, insira um e-mail válido.";
       }
@@ -352,7 +356,7 @@ const Contact = () => {
 
         <Flex
           mt={20}
-          gap="40px"
+          gap="20px"
           w="100%"
           direction={{ base: "column", lg: "row" }}
         >
@@ -362,39 +366,43 @@ const Contact = () => {
             flexDirection="column"
             width={{ base: "100%", lg: "auto" }}
           >
-            {["Suporte", "Comercial", "Financeiro", "Autodenúncia"].map(
-              (item) => (
-                <Flex
-                  key={item}
-                  cursor="pointer"
-                  fontSize={{ base: "22px", md: "24px" }}
-                  border="solid 4px"
-                  borderRadius="100px"
-                  borderColor={selectedForm === item ? "blue.500" : "gray.100"}
-                  color={selectedForm === item ? "blue.500" : "gray.500"}
-                  fontFamily="Comfortaa"
-                  fontWeight="bold"
-                  h="56px"
-                  alignItems="center"
-                  px="26px"
-                  pr="16px"
-                  pt="5px"
-                  onClick={() => handleMenuClick(item as FormType)}
-                  justifyContent="space-between"
-                >
-                  <Flex>{item}</Flex>
-                  {selectedForm === item ? (
-                    <Image
-                      src="/images/arrow-icon-blue.svg"
-                      mt="-4px"
-                      alt={`Ir para ${item}`}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </Flex>
-              )
-            )}
+            {[
+              "Suporte",
+              "Comercial",
+              "Financeiro",
+              "Canal de Ética e Integridade",
+            ].map((item) => (
+              <Flex
+                key={item}
+                cursor="pointer"
+                fontSize={{ base: "18px", md: "18px" }}
+                border="solid 4px"
+                borderRadius="100px"
+                borderColor={selectedForm === item ? "blue.500" : "gray.100"}
+                color={selectedForm === item ? "blue.500" : "gray.500"}
+                fontFamily="Comfortaa"
+                fontWeight="bold"
+                h="60px"
+                alignItems="center"
+                px="26px"
+                pr="26px"
+                pt="5px"
+                onClick={() => handleMenuClick(item as FormType)}
+                justifyContent="space-between"
+              >
+                <Flex>{item}</Flex>
+                {selectedForm === item ? (
+                  <Image
+                    src="/images/arrow-icon-blue.svg"
+                    mt="-4px"
+                    ml="10px"
+                    alt={`Ir para ${item}`}
+                  />
+                ) : (
+                  <></>
+                )}
+              </Flex>
+            ))}
           </Flex>
           <Box pl={{ lg: 4 }} flex="1">
             <Box ref={scrollToFormRef} height="20px" />
@@ -404,8 +412,13 @@ const Contact = () => {
               mb={4}
               color="darkBlue.500"
               letterSpacing="-1px"
+              lineHeight="100%"
             >
-              Fale com o {selectedForm}
+              {selectedForm === "Canal de Ética e Integridade" ? (
+                <>Descreva aqui a sua dúvida, reclamação ou preocupação.</>
+              ) : (
+                <>Fale com o {selectedForm}</>
+              )}
             </Heading>
             {!formSubmitted ? (
               renderForm()

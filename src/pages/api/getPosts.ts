@@ -11,6 +11,8 @@ type Article = {
   slug: string;
   category_id: number;
   category_name: string;
+  published: boolean;
+  highlight: boolean; // Adicionando o campo highlighted
 };
 
 export default async function handler(
@@ -18,11 +20,11 @@ export default async function handler(
   res: NextApiResponse<Article[] | { error: string }>
 ) {
   if (req.method === "GET") {
-    const { limit } = req.query;
+    const { limit, published, highlight } = req.query;
 
     const postLimit = limit ? parseInt(limit as string, 10) : 1;
 
-    const { data, error } = await supabase
+    let query = supabase
       .from("articles")
       .select(
         `id,
@@ -32,10 +34,24 @@ export default async function handler(
         image,
         slug,
         category_id,
+        published,
+        highlight,
         categories(name)`
       )
       .order("created_at", { ascending: false })
       .limit(postLimit);
+
+    // Aplicar o filtro para published se o parâmetro for passado
+    if (published === "true") {
+      query = query.eq("published", true);
+    }
+
+    // Aplicar o filtro para highlighted se o parâmetro for passado
+    if (highlight === "true") {
+      query = query.eq("highlight", true);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error("Supabase error:", error.message);
@@ -52,6 +68,8 @@ export default async function handler(
       slug: article.slug,
       category_id: article.category_id,
       category_name: (article.categories as any).name || null,
+      published: article.published,
+      highlight: article.highlight, // Incluindo o campo highlighted
     }));
 
     return res.status(200).json(articles);
